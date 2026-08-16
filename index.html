@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayao — PDF Konverter</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --drop-bg: #fafafa;
+      --panel-bg: #f8fafc;
+      --radius: 16px;
+    }
+
+    /* Dark Mode Variablen */
+    body.dark-mode {
+      --primary: #6366f1;
+      --primary-hover: #818cf8;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --drop-bg: #111827;
+      --panel-bg: #111827;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .app-container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 650px;
+      padding: 40px;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Brand Header & Theme Toggle */
+    .brand-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .brand-logo-svg {
+      height: 55px;
+      width: auto;
+    }
+
+    .theme-toggle-btn {
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--primary);
+    }
+
+    /* Drop Zone */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 40px 20px;
+      text-align: center;
+      background-color: var(--drop-bg);
+      cursor: pointer;
+      transition: 0.3s;
+      margin-bottom: 25px;
+    }
+
+    .drop-zone:hover { background-color: var(--panel-bg); border-color: var(--primary); }
+    .drop-zone p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
+    .drop-zone span { color: var(--primary); font-weight: 600; text-decoration: underline; }
+    #file-input { display: none; }
+
+    /* Settings Panel */
+    .settings-panel {
+      background: var(--panel-bg);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      border: 1px solid var(--border);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .setting-group { display: flex; flex-direction: column; gap: 8px; }
+    .setting-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .setting-group select, .setting-group input { padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 0.95rem; outline: none; }
+
+    /* File List */
+    .file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px; max-height: 250px; overflow-y: auto; }
+    .file-card { position: relative; border: 1px solid var(--border); border-radius: 8px; padding: 5px; text-align: center; background: var(--card-bg); }
+    .file-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; }
+    .remove-btn { position: absolute; top: 2px; right: 2px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+
+    /* Buttons */
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+  </style>
+</head>
+<body class="dark-mode">
+
+  <div class="app-container">
+    <div class="brand-header">
+      <!-- Ayao Vektor-Logo -->
+      <svg class="brand-logo-svg" viewBox="0 0 240 75" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gradA" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1" />
+            <stop offset="100%" stop-color="#4f46e5" />
+          </linearGradient>
+          <linearGradient id="gradText" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--text-main)" />
+            <stop offset="100%" stop-color="var(--text-main)" />
+          </linearGradient>
+        </defs>
+        <g transform="translate(0, 2)">
+          <path d="M28 4 L48 48 H39 L33.5 35 H18.5 L13 48 H4 L24 4 Z" fill="url(#gradA)" />
+          <path d="M15 31 Q26 22 37 31 Q26 40 15 31 Z" fill="#ffffff" opacity="0.9" />
+          <path d="M17 29 Q26 21 35 29" stroke="#4f46e5" stroke-width="2" fill="none" />
+        </g>
+        <text x="62" y="50" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="40" font-weight="700" fill="var(--text-main)" letter-spacing="0.5">Ayao</text>
+      </svg>
+
+      <!-- Dark Mode Umschalter -->
+      <button class="theme-toggle-btn" id="theme-toggle" title="Design wechseln">☀️</button>
+    </div>
+
+    <div class="drop-zone" id="drop-zone">
+      <p>Bilder hierher ziehen oder <span>Durchsuchen</span></p>
+      <input type="file" id="file-input" multiple accept="image/png, image/jpeg, image/webp">
+    </div>
+
+    <div class="settings-panel">
+      <div class="setting-group">
+        <label>Seitengröße</label>
+        <select id="page-size">
+          <option value="fit">An Bild anpassen</option>
+          <option value="a4">A4 Standard</option>
+        </select>
+      </div>
+      <div class="setting-group">
+        <label>Ausrichtung</label>
+        <select id="orientation">
+          <option value="portrait">Hochformat</option>
+          <option value="landscape">Querformat</option>
+        </select>
+      </div>
+      <div class="setting-group" style="grid-column: span 2;">
+        <label>Rand (in mm)</label>
+        <select id="margin-select">
+          <option value="0" selected>Kein Rand (0 mm)</option>
+          <option value="5">5 mm</option>
+          <option value="10">10 mm</option>
+          <option value="15">15 mm</option>
+          <option value="20">20 mm</option>
+          <option value="25">25 mm</option>
+          <option value="30">30 mm</option>
+          <option value="custom">Benutzerdefiniert...</option>
+        </select>
+        <input type="number" id="margin-custom" min="0" max="100" value="0" style="display: none; margin-top: 5px;" placeholder="Wert in mm">
+      </div>
+    </div>
+
+    <div class="file-list" id="file-list"></div>
+    <button class="btn btn-primary" id="generate-btn" disabled>PDF erstellen & herunterladen</button>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // --- Dark Mode Standard Logik ---
+      const themeToggle = document.getElementById('theme-toggle');
+      const savedTheme = localStorage.getItem('ayao_theme');
+      
+      // Wenn der Nutzer explizit 'light' gewählt hat, schalten wir auf Hell, sonst bleibt es standardmäßig Dark Mode
+      if (savedTheme === 'light') {
+        document.body.classList.remove('dark-mode');
+        themeToggle.innerText = '🌙';
+      } else {
+        document.body.classList.add('dark-mode');
+        themeToggle.innerText = '☀️';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        themeToggle.innerText = isDark ? '☀️' : '🌙';
+        localStorage.setItem('ayao_theme', isDark ? 'dark' : 'light');
+      });
+
+      // --- PDF Logik ---
+      if (typeof window.jspdf === 'undefined') {
+        alert("Fehler: Die PDF-Bibliothek konnte nicht geladen werden.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const fileList = document.getElementById('file-list');
+      const generateBtn = document.getElementById('generate-btn');
+      const marginSelect = document.getElementById('margin-select');
+      const marginCustomInput = document.getElementById('margin-custom');
+
+      let selectedFiles = [];
+
+      marginSelect.addEventListener('change', () => {
+        marginCustomInput.style.display = (marginSelect.value === 'custom') ? 'block' : 'none';
+      });
+
+      function getSelectedMargin() {
+        if (marginSelect.value === 'custom') {
+          const val = parseFloat(marginCustomInput.value);
+          return isNaN(val) ? 0 : Math.max(0, val);
+        }
+        return parseFloat(marginSelect.value);
+      }
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+      ['dragleave', 'dragend'].forEach(evt => dropZone.addEventListener(evt, () => dropZone.classList.remove('dragover')));
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
+      });
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) handleFiles(fileInput.files);
+      });
+
+      function handleFiles(files) {
+        const validTypes = ['image/png', 'image/jpeg', 'image/webp'];
+        const newFiles = Array.from(files).filter(f => validTypes.includes(f.type));
+        
+        if (newFiles.length === 0) {
+          alert('Bitte wähle Bilddateien aus.');
+          return;
+        }
+
+        selectedFiles = selectedFiles.concat(newFiles);
+        renderUI();
+      }
+
+      window.removeFile = function(index) {
+        selectedFiles.splice(index, 1);
+        renderUI();
+      }
+
+      function renderUI() {
+        fileList.innerHTML = '';
+        selectedFiles.forEach((file, idx) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const card = document.createElement('div');
+            card.className = 'file-card';
+            card.innerHTML = `
+              <button class="remove-btn" onclick="removeFile(${idx})">✕</button>
+              <img src="${e.target.result}">
+            `;
+            fileList.appendChild(card);
+          };
+          reader.readAsDataURL(file);
+        });
+
+        generateBtn.disabled = selectedFiles.length === 0;
+      }
+
+      function processImageForPDF(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0);
+
+              let mimeType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+              let jsPdfFormat = file.type === 'image/png' ? 'PNG' : 'JPEG';
+              
+              resolve({
+                dataUrl: canvas.toDataURL(mimeType, 1.0),
+                width: canvas.width,
+                height: canvas.height,
+                formatType: jsPdfFormat
+              });
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      generateBtn.addEventListener('click', async () => {
+        if (!selectedFiles.length) return;
+
+        generateBtn.disabled = true;
+        generateBtn.innerText = 'PDF wird generiert...';
+
+        try {
+          const pageSizeOpt = document.getElementById('page-size').value;
+          const orientationOpt = document.getElementById('orientation').value;
+          const marginMm = getSelectedMargin();
+
+          let pdf = null;
+
+          for (let i = 0; i < selectedFiles.length; i++) {
+            const imgData = await processImageForPDF(selectedFiles[i]);
+
+            const imgWidthMm = (imgData.width * 25.4) / 96;
+            const imgHeightMm = (imgData.height * 25.4) / 96;
+
+            let pdfWidth, pdfHeight, orientation;
+
+            if (pageSizeOpt === 'fit') {
+              pdfWidth = imgWidthMm + (marginMm * 2);
+              pdfHeight = imgHeightMm + (marginMm * 2);
+              orientation = pdfWidth > pdfHeight ? 'l' : 'p';
+            } else {
+              orientation = orientationOpt === 'landscape' ? 'l' : 'p';
+              pdfWidth = orientation === 'l' ? 297 : 210;
+              pdfHeight = orientation === 'l' ? 210 : 297;
+            }
+
+            if (i === 0) {
+              pdf = new jsPDF({ orientation: orientation, unit: 'mm', format: [pdfWidth, pdfHeight] });
+            } else {
+              pdf.addPage([pdfWidth, pdfHeight], orientation);
+            }
+
+            const availWidth = pdfWidth - (marginMm * 2);
+            const availHeight = pdfHeight - (marginMm * 2);
+
+            let drawWidth, drawHeight, xPos, yPos;
+
+            if (pageSizeOpt === 'fit') {
+              drawWidth = imgWidthMm;
+              drawHeight = imgHeightMm;
+              xPos = marginMm;
+              yPos = marginMm;
+            } else {
+              const scaleX = availWidth / imgWidthMm;
+              const scaleY = availHeight / imgHeightMm;
+              const scale = Math.min(scaleX, scaleY);
+
+              drawWidth = imgWidthMm * scale;
+              drawHeight = imgHeightMm * scale;
+
+              xPos = marginMm + (availWidth - drawWidth) / 2;
+              yPos = marginMm + (availHeight - drawHeight) / 2;
+            }
+
+            pdf.addImage(imgData.dataUrl, imgData.formatType, xPos, yPos, drawWidth, drawHeight);
+          }
+
+          pdf.save('ayaoumsatz.pdf');
+
+        } catch (error) {
+          console.error(error);
+          alert("Fehler beim Erstellen des PDFs.");
+        }
+
+        generateBtn.disabled = false;
+        generateBtn.innerText = 'PDF erstellen & herunterladen';
+      });
+    });
+  </script>
+</body>
+</html>
