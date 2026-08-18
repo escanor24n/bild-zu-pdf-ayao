@@ -35,143 +35,61 @@
       --panel-bg: #111827;
     }
 
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg);
-      color: var(--text-main);
-      margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .app-container {
-      background: var(--card-bg);
-      width: 100%;
-      max-width: 650px;
-      padding: 40px;
-      border-radius: var(--radius);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--border);
-      transition: background-color 0.3s ease, border-color 0.3s ease;
-    }
-
-    .brand-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .brand-logo-svg {
-      height: 55px;
-      width: auto;
-    }
-
-    .theme-toggle-btn {
-      background: var(--panel-bg);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      transition: all 0.2s ease;
-    }
-
-    .theme-toggle-btn:hover {
-      border-color: var(--primary);
-    }
-
-    .seo-intro {
-      margin-bottom: 25px;
-      font-size: 0.92rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .seo-intro h1 {
-      font-size: 1.25rem;
-      color: var(--text-main);
-      margin: 0 0 8px 0;
-    }
-
-    .drop-zone {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 40px 20px;
-      text-align: center;
-      background-color: var(--drop-bg);
-      cursor: pointer;
-      transition: 0.3s;
-      margin-bottom: 25px;
-    }
-
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding: 40px 20px; display: flex; justify-content: center; min-height: 100vh; transition: background-color 0.3s ease, color 0.3s ease; }
+    .app-container { background: var(--card-bg); width: 100%; max-width: 650px; padding: 40px; border-radius: var(--radius); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); box-sizing: border-box; }
+    .brand-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .brand-logo-svg { height: 55px; width: auto; }
+    .theme-toggle-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .theme-toggle-btn:hover { border-color: var(--primary); }
+    .seo-intro { margin-bottom: 25px; font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; }
+    .seo-intro h1 { font-size: 1.25rem; color: var(--text-main); margin: 0 0 8px 0; }
+    .drop-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px; text-align: center; background-color: var(--drop-bg); cursor: pointer; margin-bottom: 25px; }
     .drop-zone:hover { background-color: var(--panel-bg); border-color: var(--primary); }
-    .drop-zone p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
-    .drop-zone span { color: var(--primary); font-weight: 600; text-decoration: underline; }
-    #file-input { display: none; }
-
-    .settings-panel {
-      background: var(--panel-bg);
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 25px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      border: 1px solid var(--border);
-    }
-
+    .settings-panel { background: var(--panel-bg); padding: 20px; border-radius: 12px; margin-bottom: 25px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid var(--border); }
     .setting-group { display: flex; flex-direction: column; gap: 8px; }
     .setting-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
     .setting-group select, .setting-group input { padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 0.95rem; outline: none; }
-
     .file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin-bottom: 25px; max-height: 250px; overflow-y: auto; }
     .file-card { position: relative; border: 1px solid var(--border); border-radius: 8px; padding: 5px; text-align: center; background: var(--card-bg); }
     .file-card img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; }
     .remove-btn { position: absolute; top: 2px; right: 2px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
-
     .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem; }
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+    
+    /* PayPal Spenden Button */
+    .coffee-container { text-align: center; margin-top: 30px; }
+    .paypal-btn { display: inline-block; background: #0070ba; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.95rem; transition: background 0.2s, transform 0.2s; }
+    .paypal-btn:hover { background: #005ea6; transform: scale(1.02); }
 
-    .feedback-container {
-      margin-top: 40px;
-      padding-top: 30px;
-      border-top: 1px solid var(--border);
-      text-align: center;
-    }
+    /* Feedback Section */
+    .feedback-container { margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border); text-align: center; }
     .star-rating { font-size: 2rem; color: #fbbf24; cursor: pointer; margin-bottom: 15px; user-select: none; }
     .feedback-textarea { width: 100%; height: 90px; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text-main); font-size: 0.95rem; resize: vertical; outline: none; box-sizing: border-box; }
     .feedback-footer { margin-top: 15px; }
     .feedback-footer a { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; }
+
+    /* Rechtlicher Footer & Modals */
+    .legal-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+    .legal-footer a { color: var(--text-muted); text-decoration: underline; cursor: pointer; margin: 0 10px; }
+    .legal-footer a:hover { color: var(--primary); }
+
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+    .modal-content { background: var(--card-bg); color: var(--text-main); padding: 30px; border-radius: var(--radius); max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border); position: relative; line-height: 1.6; font-size: 0.9rem; }
+    .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+    .close-modal:hover { color: var(--danger); }
+    .modal-content h3 { margin-top: 0; color: var(--text-main); }
   </style>
 </head>
 <body class="dark-mode">
 
   <div class="app-container">
     <div class="brand-header">
-      <!-- Nur noch das A-Logo -->
       <svg class="brand-logo-svg" viewBox="0 0 55 55" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="gradA" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#6366f1" />
-            <stop offset="100%" stop-color="#4f46e5" />
-          </linearGradient>
-        </defs>
-        <g transform="translate(0, 2)">
-          <path d="M28 4 L48 48 H39 L33.5 35 H18.5 L13 48 H4 L24 4 Z" fill="url(#gradA)" />
-          <path d="M15 31 Q26 22 37 31 Q26 40 15 31 Z" fill="#ffffff" opacity="0.9" />
-          <path d="M17 29 Q26 21 35 29" stroke="#4f46e5" stroke-width="2" fill="none" />
-        </g>
+        <defs><linearGradient id="gradA" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1" /><stop offset="100%" stop-color="#4f46e5" /></linearGradient></defs>
+        <path d="M28 4 L48 48 H39 L33.5 35 H18.5 L13 48 H4 L24 4 Z" fill="url(#gradA)" />
+        <path d="M15 31 Q26 22 37 31 Q26 40 15 31 Z" fill="#ffffff" opacity="0.9" />
       </svg>
       <button class="theme-toggle-btn" id="theme-toggle" title="Design wechseln">☀️</button>
     </div>
@@ -187,43 +105,23 @@
     </div>
 
     <div class="settings-panel">
-      <div class="setting-group">
-        <label>Seitengröße</label>
-        <select id="page-size">
-          <option value="fit">An Bild anpassen</option>
-          <option value="a4">A4 Standard</option>
-        </select>
-      </div>
-      <div class="setting-group">
-        <label>Ausrichtung</label>
-        <select id="orientation">
-          <option value="portrait">Hochformat</option>
-          <option value="landscape">Querformat</option>
-        </select>
-      </div>
-      <div class="setting-group" style="grid-column: span 2;">
-        <label>Rand (in mm)</label>
-        <select id="margin-select">
-          <option value="0" selected>Kein Rand (0 mm)</option>
-          <option value="5">5 mm</option>
-          <option value="10">10 mm</option>
-          <option value="custom">Benutzerdefiniert...</option>
-        </select>
-        <input type="number" id="margin-custom" min="0" max="100" value="0" style="display: none; margin-top: 5px;" placeholder="Wert in mm">
-      </div>
+      <div class="setting-group"><label>Seitengröße</label><select id="page-size"><option value="fit">An Bild anpassen</option><option value="a4">A4 Standard</option></select></div>
+      <div class="setting-group"><label>Ausrichtung</label><select id="orientation"><option value="portrait">Hochformat</option><option value="landscape">Querformat</option></select></div>
+      <div class="setting-group" style="grid-column: span 2;"><label>Rand (in mm)</label><select id="margin-select"><option value="0" selected>Kein Rand (0 mm)</option><option value="5">5 mm</option><option value="10">10 mm</option><option value="custom">Benutzerdefiniert...</option></select><input type="number" id="margin-custom" min="0" max="100" value="0" style="display: none; margin-top: 5px;" placeholder="Wert in mm"></div>
     </div>
 
     <div class="file-list" id="file-list"></div>
     <button class="btn btn-primary" id="generate-btn" disabled>PDF erstellen & herunterladen</button>
 
+    <!-- PayPal Spenden Button -->
+    <div class="coffee-container">
+      <a href="https://paypal.me/ayao24n" target="_blank" class="paypal-btn">☕ Unterstütze das Projekt mit einer Spende</a>
+    </div>
+
     <div class="feedback-container">
       <h2>Bitte bewerte diese App</h2>
       <div class="star-rating" id="star-rating">
-        <span class="star" data-value="1">☆</span>
-        <span class="star" data-value="2">☆</span>
-        <span class="star" data-value="3">☆</span>
-        <span class="star" data-value="4">☆</span>
-        <span class="star" data-value="5">☆</span>
+        <span class="star" data-value="1">☆</span><span class="star" data-value="2">☆</span><span class="star" data-value="3">☆</span><span class="star" data-value="4">☆</span><span class="star" data-value="5">☆</span>
       </div>
       <textarea class="feedback-textarea" id="feedback-text" placeholder="Ihre Eindrücke und Gedanken. Bitte fair bewerten."></textarea>
       <button class="btn btn-primary" id="feedback-submit-btn" style="margin-top: 15px;">Absenden</button>
@@ -231,11 +129,62 @@
         <a href="#" id="report-problem-link">Probleme bitte hier melden →</a>
       </div>
     </div>
+
+    <!-- Rechtlicher Footer -->
+    <div class="legal-footer">
+      <a id="btn-impressum">Impressum</a> | <a id="btn-datenschutz">Datenschutz</a>
+    </div>
+  </div>
+
+  <!-- IMPRESSUM MODAL (Mit Testdaten) -->
+  <div id="modal-impressum" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-impressum">&times;</span>
+      <h3>Impressum</h3>
+      <p><strong>Angaben gemäß § 5 TMG (Musterangaben):</strong></p>
+      <p>
+        Max Mustermann<br>
+        Musterstraße 1<br>
+        12345 Musterstadt<br>
+      </p>
+      <p><strong>Kontakt:</strong><br>
+      E-Mail: muster@example.com</p>
+    </div>
+  </div>
+
+  <!-- DATENSCHUTZ MODAL -->
+  <div id="modal-datenschutz" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-datenschutz">&times;</span>
+      <h3>Datenschutzerklärung</h3>
+      <p><strong>1. Datenschutz auf einen Blick</strong></p>
+      <p>Deine Bilddateien werden ausschließlich lokal in deinem Browser verarbeitet und zu keinem Zeitpunkt auf unsere Server hochgeladen. Deine Privatsphäre ist zu 100% geschützt.</p>
+      <p><strong>2. Hosting über GitHub Pages</strong></p>
+      <p>Diese Website wird über GitHub Pages gehostet. Anbieter ist die GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, USA. GitHub erfasst ggf. Server-Logfiles (IP-Adresse etc.).</p>
+      <p><strong>3. Feedback & Fehlermeldungen (Web3Forms)</strong></p>
+      <p>Wenn du das Feedback-Formular oder die Fehlermeldung nutzt, werden deine Angaben via Web3Forms übermittelt.</p>
+      <p><strong>4. Spenden via PayPal</strong></p>
+      <p>Wenn du den Spenden-Button nutzt, wirst du zu PayPal.Me weitergeleitet. Es gelten die Datenschutzbestimmungen von PayPal.</p>
+    </div>
   </div>
 
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       const WEB3FORMS_KEY = "1de638c1-2c23-4f9d-b4b2-73bd28328a85";
+
+      const impModal = document.getElementById('modal-impressum');
+      const datModal = document.getElementById('modal-datenschutz');
+      
+      document.getElementById('btn-impressum').addEventListener('click', (e) => { e.preventDefault(); impModal.style.display = 'flex'; });
+      document.getElementById('close-impressum').addEventListener('click', () => impModal.style.display = 'none');
+      
+      document.getElementById('btn-datenschutz').addEventListener('click', (e) => { e.preventDefault(); datModal.style.display = 'flex'; });
+      document.getElementById('close-datenschutz').addEventListener('click', () => datModal.style.display = 'none');
+
+      window.addEventListener('click', (e) => {
+        if (e.target === impModal) impModal.style.display = 'none';
+        if (e.target === datModal) datModal.style.display = 'none';
+      });
 
       const themeToggle = document.getElementById('theme-toggle');
       if (localStorage.getItem('ayao_theme') === 'light') {
@@ -295,7 +244,6 @@
         }
       });
 
-      // PDF Logic remains same...
       if (typeof window.jspdf === 'undefined') return;
       const { jsPDF } = window.jspdf;
       const dropZone = document.getElementById('drop-zone');
