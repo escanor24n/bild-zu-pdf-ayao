@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Der Bild zu PDF Konverter: Wandle deine Bilder (JPG, PNG, WebP) einfach, schnell und datenschutzkonform direkt im Browser in PDF-Dokumente um. Keine Registrierung nötig.">
+  <title>Bild zu PDF Konverter — A</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     :root {
       --primary: #4f46e5;
@@ -26,23 +36,339 @@
     }
 
     body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text-main); margin: 0; padding: 20px 10px; display: flex; justify-content: center; min-height: 100vh; transition: background-color 0.3s ease, color 0.3s ease; }
-    .app-container { background: var(--card-bg); width: 100%; max-width: 650px; padding: 25px; border-radius: var(--radius); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); box-sizing: border-box; }
+    .app-container { background: var(--card-bg); width: 100%; max-width: 650px; padding: 30px 20px; border-radius: var(--radius); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border: 1px solid var(--border); box-sizing: border-box; }
     
     .brand-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .brand-logo-svg { height: 45px; width: auto; }
+    .theme-toggle-btn { background: var(--panel-bg); border: 1px solid var(--border); color: var(--text-main); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+    .theme-toggle-btn:hover { border-color: var(--primary); }
     
-    .seo-intro { margin-bottom: 20px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4; }
-    .seo-intro h1 { font-size: 1.2rem; color: var(--text-main); margin: 0 0 8px 0; }
+    .seo-intro { margin-bottom: 20px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+    .seo-intro h1 { font-size: 1.25rem; color: var(--text-main); margin: 0 0 8px 0; }
     
     .drop-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 30px 15px; text-align: center; background-color: var(--drop-bg); cursor: pointer; margin-bottom: 20px; }
+    .drop-zone:hover { background-color: var(--panel-bg); border-color: var(--primary); }
     #file-input { margin-top: 15px; display: block; width: 100%; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
 
     .settings-panel { background: var(--panel-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 15px; border: 1px solid var(--border); }
     .setting-group { display: flex; flex-direction: column; gap: 5px; }
-    .setting-group label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-    .setting-group select, .setting-group input { padding: 8px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 0.9rem; }
+    .setting-group label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .setting-group select, .setting-group input { padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text-main); font-size: 0.95rem; outline: none; width: 100%; box-sizing: border-box; }
     
-    .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; }
+    .file-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-bottom: 20px; max-height: 220px; overflow-y: auto; }
+    .file-card { position: relative; border: 1px solid var(--border); border-radius: 8px; padding: 4px; text-align: center; background: var(--card-bg); }
+    .file-card img { width: 100%; height: 75px; object-fit: cover; border-radius: 4px; }
+    .remove-btn { position: absolute; top: 2px; right: 2px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; }
     
-    /* ... (rest of the styles: paypal-btn, feedback, modals, etc. remain the same) ... */
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 1rem; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+    
+    /* PayPal Spenden Button */
+    .coffee-container { text-align: center; margin-top: 25px; }
+    .paypal-btn { display: inline-block; background: #0070ba; color: #ffffff; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.9rem; transition: background 0.2s, transform 0.2s; width: 100%; box-sizing: border-box; }
+    .paypal-btn:hover { background: #005ea6; }
+
+    /* Feedback Section */
+    .feedback-container { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--border); text-align: center; }
+    .feedback-container h2 { font-size: 1.1rem; margin-bottom: 10px; }
+    .star-rating { font-size: 1.8rem; color: #fbbf24; cursor: pointer; margin-bottom: 10px; user-select: none; }
+    .feedback-textarea { width: 100%; height: 80px; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-bg); color: var(--text-main); font-size: 0.9rem; resize: vertical; outline: none; box-sizing: border-box; }
+    .feedback-footer { margin-top: 10px; }
+    .feedback-footer a { color: var(--text-muted); font-size: 0.85rem; text-decoration: none; }
+
+    /* Rechtlicher Footer & Modals */
+    .legal-footer { margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border); text-align: center; font-size: 0.8rem; color: var(--text-muted); }
+    .legal-footer a { color: var(--text-muted); text-decoration: underline; cursor: pointer; margin: 0 8px; }
+    .legal-footer a:hover { color: var(--primary); }
+
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; padding: 15px; box-sizing: border-box; }
+    .modal-content { background: var(--card-bg); color: var(--text-main); padding: 25px; border-radius: var(--radius); max-width: 450px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border); position: relative; line-height: 1.5; font-size: 0.85rem; text-align: left; }
+    .close-modal { position: absolute; top: 12px; right: 15px; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); }
+    .close-modal:hover { color: var(--danger); }
+    .modal-content h3 { margin-top: 0; color: var(--text-main); }
+
+    /* Media Query für breitere Bildschirme */
+    @media (min-width: 600px) {
+      .settings-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+      .app-container { padding: 40px; }
+    }
   </style>
+</head>
+<body class="dark-mode">
+
+  <div class="app-container">
+    <div class="brand-header">
+      <svg class="brand-logo-svg" viewBox="0 0 55 55" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="gradA" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1" /><stop offset="100%" stop-color="#4f46e5" /></linearGradient></defs>
+        <path d="M28 4 L48 48 H39 L33.5 35 H18.5 L13 48 H4 L24 4 Z" fill="url(#gradA)" />
+        <path d="M15 31 Q26 22 37 31 Q26 40 15 31 Z" fill="#ffffff" opacity="0.9" />
+      </svg>
+      <button class="theme-toggle-btn" id="theme-toggle" title="Design wechseln">☀️</button>
+    </div>
+
+    <div class="seo-intro">
+      <h1>Bild zu PDF Konverter</h1>
+      <p>Wandle deine Bilder (JPG, PNG, WebP) sicher, schnell und datenschutzkonform direkt im Browser in professionelle PDF-Dokumente um.</p>
+    </div>
+
+    <div class="drop-zone" id="drop-zone">
+      <p>Bilder hierher ziehen oder klicken</p>
+      <input type="file" id="file-input" multiple accept="image/png, image/jpeg, image/webp">
+    </div>
+
+    <div class="settings-panel">
+      <div class="setting-group">
+        <label>Seitengröße</label>
+        <select id="page-size"><option value="fit">An Bild anpassen</option><option value="a4">A4 Standard</option></select>
+      </div>
+      <div class="setting-group">
+        <label>Ausrichtung</label>
+        <select id="orientation"><option value="portrait">Hochformat</option><option value="landscape">Querformat</option></select>
+      </div>
+      <div class="setting-group" style="grid-column: 1 / -1;">
+        <label>Rand (in mm)</label>
+        <select id="margin-select">
+          <option value="0" selected>Kein Rand (0 mm)</option>
+          <option value="5">5 mm</option>
+          <option value="10">10 mm</option>
+          <option value="custom">Benutzerdefiniert...</option>
+        </select>
+        <input type="number" id="margin-custom" min="0" max="100" value="0" style="display: none; margin-top: 5px;" placeholder="Wert in mm">
+      </div>
+    </div>
+
+    <div class="file-list" id="file-list"></div>
+    <button class="btn btn-primary" id="generate-btn" disabled>PDF erstellen & herunterladen</button>
+
+    <!-- PayPal Spenden Button -->
+    <div class="coffee-container">
+      <a href="https://paypal.me/ayao24n" target="_blank" class="paypal-btn">☕ Unterstütze das Projekt mit einer Spende</a>
+    </div>
+
+    <div class="feedback-container">
+      <h2>Bitte bewerte diese App</h2>
+      <div class="star-rating" id="star-rating">
+        <span class="star" data-value="1">☆</span><span class="star" data-value="2">☆</span><span class="star" data-value="3">☆</span><span class="star" data-value="4">☆</span><span class="star" data-value="5">☆</span>
+      </div>
+      <textarea class="feedback-textarea" id="feedback-text" placeholder="Ihre Eindrücke und Gedanken..."></textarea>
+      <button class="btn btn-primary" id="feedback-submit-btn" style="margin-top: 12px; padding: 10px;">Absenden</button>
+      <div class="feedback-footer">
+        <a href="#" id="report-problem-link">Probleme bitte hier melden →</a>
+      </div>
+    </div>
+
+    <!-- Rechtlicher Footer -->
+    <div class="legal-footer">
+      <a id="btn-impressum">Impressum</a> | <a id="btn-datenschutz">Datenschutz</a>
+    </div>
+  </div>
+
+  <!-- IMPRESSUM MODAL -->
+  <div id="modal-impressum" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-impressum">&times;</span>
+      <h3>Impressum</h3>
+      <p><strong>Angaben gemäß § 5 TMG (Testdaten):</strong></p>
+      <p>
+        Max Mustermann<br>
+        Musterstraße 1<br>
+        12345 Musterstadt<br>
+      </p>
+      <p><strong>Kontakt:</strong><br>E-Mail: muster@example.com</p>
+    </div>
+  </div>
+
+  <!-- DATENSCHUTZ MODAL -->
+  <div id="modal-datenschutz" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-datenschutz">&times;</span>
+      <h3>Datenschutzerklärung</h3>
+      <p><strong>1. Datenschutz auf einen Blick</strong></p>
+      <p>Deine Bilddateien werden ausschließlich lokal in deinem Browser verarbeitet und zu keinem Zeitpunkt auf Server hochgeladen.</p>
+      <p><strong>2. Hosting & Externe Dienste</strong></p>
+      <p>Hosting über GitHub Pages. Feedback läuft über Web3Forms. Spenden über PayPal.Me.</p>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const WEB3FORMS_KEY = "1de638c1-2c23-4f9d-b4b2-73bd28328a85";
+
+      // Modals
+      const impModal = document.getElementById('modal-impressum');
+      const datModal = document.getElementById('modal-datenschutz');
+      
+      document.getElementById('btn-impressum').addEventListener('click', (e) => { e.preventDefault(); impModal.style.display = 'flex'; });
+      document.getElementById('close-impressum').addEventListener('click', () => impModal.style.display = 'none');
+      document.getElementById('btn-datenschutz').addEventListener('click', (e) => { e.preventDefault(); datModal.style.display = 'flex'; });
+      document.getElementById('close-datenschutz').addEventListener('click', () => datModal.style.display = 'none');
+
+      window.addEventListener('click', (e) => {
+        if (e.target === impModal) impModal.style.display = 'none';
+        if (e.target === datModal) datModal.style.display = 'none';
+      });
+
+      // Dark Mode
+      const themeToggle = document.getElementById('theme-toggle');
+      if (localStorage.getItem('ayao_theme') === 'light') {
+        document.body.classList.remove('dark-mode');
+        themeToggle.innerText = '🌙';
+      }
+
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        themeToggle.innerText = isDark ? '☀️' : '🌙';
+        localStorage.setItem('ayao_theme', isDark ? 'dark' : 'light');
+      });
+
+      // Sterne Bewertung
+      const stars = document.querySelectorAll('.star-rating .star');
+      let currentRating = 0;
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+          currentRating = parseInt(star.getAttribute('data-value'));
+          stars.forEach((s, i) => s.innerText = i < currentRating ? '★' : '☆');
+        });
+      });
+
+      // Feedback Absenden
+      const feedbackSubmitBtn = document.getElementById('feedback-submit-btn');
+      const feedbackText = document.getElementById('feedback-text');
+
+      feedbackSubmitBtn.addEventListener('click', async () => {
+        if (currentRating === 0 && feedbackText.value.trim() === '') return alert('Bitte bewerte kurz.');
+        try {
+          const response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              access_key: WEB3FORMS_KEY,
+              subject: `App-Bewertung: ${currentRating} Sterne`,
+              message: feedbackText.value.trim() || 'Kein Text.'
+            })
+          });
+          if ((await response.json()).success) {
+            alert('Vielen Dank!');
+            feedbackText.value = '';
+          }
+        } catch (error) { alert('Fehler beim Senden.'); }
+      });
+
+      document.getElementById('report-problem-link').addEventListener('click', async (e) => {
+        e.preventDefault();
+        const problem = prompt('Was ist das Problem?');
+        if (problem) {
+            await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ access_key: WEB3FORMS_KEY, subject: '🚨 Problem', message: problem })
+            });
+            alert('Danke für die Meldung.');
+        }
+      });
+
+      // PDF Konverter Logik
+      if (typeof window.jspdf === 'undefined') return;
+      const { jsPDF } = window.jspdf;
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const fileList = document.getElementById('file-list');
+      const generateBtn = document.getElementById('generate-btn');
+      const marginSelect = document.getElementById('margin-select');
+      const marginCustomInput = document.getElementById('margin-custom');
+      let selectedFiles = [];
+
+      marginSelect.addEventListener('change', () => marginCustomInput.style.display = (marginSelect.value === 'custom') ? 'block' : 'none');
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      dropZone.addEventListener('dragover', (e) => { e.preventDefault(); });
+      dropZone.addEventListener('drop', (e) => { e.preventDefault(); if (e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+      fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFiles(fileInput.files); });
+
+      function handleFiles(files) {
+        const validTypes = ['image/png', 'image/jpeg', 'image/webp'];
+        const newFiles = Array.from(files).filter(f => validTypes.includes(f.type));
+        selectedFiles = selectedFiles.concat(newFiles);
+        renderUI();
+      }
+
+      window.removeFile = function(index) { selectedFiles.splice(index, 1); renderUI(); }
+
+      function renderUI() {
+        fileList.innerHTML = '';
+        selectedFiles.forEach((file, idx) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const card = document.createElement('div');
+            card.className = 'file-card';
+            card.innerHTML = `<button class="remove-btn" onclick="removeFile(${idx})">✕</button><img src="${e.target.result}">`;
+            fileList.appendChild(card);
+          };
+          reader.readAsDataURL(file);
+        });
+        generateBtn.disabled = selectedFiles.length === 0;
+      }
+
+      function processImageForPDF(file) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              canvas.width = img.width; canvas.height = img.height;
+              const ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0);
+              resolve({ dataUrl: canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', 1.0), width: canvas.width, height: canvas.height, formatType: file.type === 'image/png' ? 'PNG' : 'JPEG' });
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      generateBtn.addEventListener('click', async () => {
+        if (!selectedFiles.length) return;
+        generateBtn.disabled = true;
+        generateBtn.innerText = 'PDF wird generiert...';
+        try {
+          const pageSizeOpt = document.getElementById('page-size').value;
+          const orientationOpt = document.getElementById('orientation').value;
+          const marginMm = marginSelect.value === 'custom' ? parseFloat(marginCustomInput.value) || 0 : parseFloat(marginSelect.value);
+          let pdf = null;
+          for (let i = 0; i < selectedFiles.length; i++) {
+            const imgData = await processImageForPDF(selectedFiles[i]);
+            const imgWidthMm = (imgData.width * 25.4) / 96;
+            const imgHeightMm = (imgData.height * 25.4) / 96;
+            let pdfWidth, pdfHeight, orientation;
+            if (pageSizeOpt === 'fit') {
+              pdfWidth = imgWidthMm + (marginMm * 2);
+              pdfHeight = imgHeightMm + (marginMm * 2);
+              orientation = pdfWidth > pdfHeight ? 'l' : 'p';
+            } else {
+              orientation = orientationOpt === 'landscape' ? 'l' : 'p';
+              pdfWidth = orientation === 'l' ? 297 : 210;
+              pdfHeight = orientation === 'l' ? 210 : 297;
+            }
+            if (i === 0) pdf = new jsPDF({ orientation: orientation, unit: 'mm', format: [pdfWidth, pdfHeight] });
+            else pdf.addPage([pdfWidth, pdfHeight], orientation);
+            const availWidth = pdfWidth - (marginMm * 2);
+            const availHeight = pdfHeight - (marginMm * 2);
+            const scale = pageSizeOpt === 'fit' ? 1 : Math.min(availWidth / imgWidthMm, availHeight / imgHeightMm);
+            const drawWidth = imgWidthMm * scale;
+            const drawHeight = imgHeightMm * scale;
+            pdf.addImage(imgData.dataUrl, imgData.formatType, marginMm + (pageSizeOpt === 'fit' ? 0 : (availWidth - drawWidth) / 2), marginMm + (pageSizeOpt === 'fit' ? 0 : (availHeight - drawHeight) / 2), drawWidth, drawHeight);
+          }
+          pdf.save('bild-zu-pdf.pdf');
+        } catch (error) { alert("Fehler beim Erstellen."); }
+        generateBtn.disabled = false;
+        generateBtn.innerText = 'PDF erstellen & herunterladen';
+      });
+    });
+  </script>
+</body>
+</html>
